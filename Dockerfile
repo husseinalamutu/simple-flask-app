@@ -1,27 +1,18 @@
-# Use a multi-stage build for efficiency
-FROM python:3.9-slim AS builder
+# Use the official Python image as the base
+FROM python:3.9
 
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install dependencies
+# Copy the requirements file and install dependencies
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your application code
+# Copy your Flask app code into the container
 COPY . .
 
-# Build the final image (slim Python image + application)
-FROM mongo:latest AS final
-
-# Set working directory
-WORKDIR /app
-
-# Copy application code from builder stage
-COPY --from=builder /app /app
-
-# Expose Flask application port
+# Expose the port your Flask app will run on
 EXPOSE 5000
 
-# Run gunicorn server
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Define the command to run your Flask app
+CMD ["python", "app.py"]
