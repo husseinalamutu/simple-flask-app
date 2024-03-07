@@ -1,7 +1,8 @@
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
+from config import Config
 
-client = MongoClient("mongodb://Admin:admin@localhost:27017/")
+client = MongoClient(Config.MONGO_URI)
 db = client["injozi"]
 users_collection = db["users"]
 
