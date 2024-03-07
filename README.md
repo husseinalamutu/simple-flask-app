@@ -51,6 +51,7 @@ This is a Flask application that demonstrates user authentication, authorization
      'SUPER': 0,
      'ADMIN': 1,
      'USER': 2
+     }
    ```
 2. **(Optional) Environment variables:** You can also store sensitive configuration in environment variables using tools like** **`dotenv` to separate them from your code.
 
