@@ -40,18 +40,17 @@ This is a Flask application that demonstrates user authentication, authorization
 
    ```
    class Config:
-   SECRET_KEY = 'your_secret_key'
-   JWT_SECRET_KEY = 'your_jwt_secret_key'  # Replace with a strong secret# MongoDB connection details
-   MONGODB_HOST = 'localhost'
-   MONGODB_PORT = 27017
-   MONGODB_DB = 'injozi'
-   MONGODB_USERNAME = 'your_username'
-   MONGODB_PASSWORD = 'your_password'# Roles
-   USER_ROLES = {
-   'SUPER': 0,
-   'ADMIN': 1,
-   'USER': 2
-   }
+     SECRET_KEY = 'your_secret_key'
+     JWT_SECRET_KEY = 'your_jwt_secret_key'  # Replace with a strong secret# MongoDB connection details
+     MONGODB_HOST = 'localhost'
+     MONGODB_PORT = 27017
+     MONGODB_DB = 'injozi'
+     MONGODB_USERNAME = 'your_username'
+     MONGODB_PASSWORD = 'your_password'# Roles
+     USER_ROLES = {
+     'SUPER': 0,
+     'ADMIN': 1,
+     'USER': 2
    ```
 2. **(Optional) Environment variables:** You can also store sensitive configuration in environment variables using tools like** **`dotenv` to separate them from your code.
 
