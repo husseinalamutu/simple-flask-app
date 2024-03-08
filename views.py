@@ -7,6 +7,10 @@ from models import User
 
 auth_bp = Blueprint('auth', __name__)
 
+@auth_bp.route('/', methods=['GET'])
+def home():
+    return render_template('base.html')
+
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
