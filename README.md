@@ -29,7 +29,7 @@ This is a Flask application that demonstrates user authentication, authorization
 3. **Install dependencies:** Navigate to your project directory and run:Bash
 
    ```
-   pip install Flask Flask-JWT Flask-MongoEngine Werkzeug bcrypt pymongo
+   pip install Flask Flask-JWT Flask-MongoEngine Werkzeug pymongo
    ```
 
    Use code** **[with caution.](https://gemini.google.com/faq#coding)
@@ -41,19 +41,11 @@ This is a Flask application that demonstrates user authentication, authorization
    ```
    class Config:
      SECRET_KEY = 'your_secret_key'
+     MONGO_URI  = 'your mongo uri'
      JWT_SECRET_KEY = 'your_jwt_secret_key'  # Replace with a strong secret# MongoDB connection details
-     MONGODB_HOST = 'localhost'
-     MONGODB_PORT = 27017
-     MONGODB_DB = 'injozi'
-     MONGODB_USERNAME = 'your_username'
-     MONGODB_PASSWORD = 'your_password'# Roles
-     USER_ROLES = {
-     'SUPER': 0,
-     'ADMIN': 1,
-     'USER': 2
-     }
    ```
-2. **(Optional) Environment variables:** You can also store sensitive configuration in environment variables using tools like** **`dotenv` to separate them from your code.
+
+   *NB:* I am using a dotenv file to store the above sensitive values, you might need to create that too, for this to work.
 
 **Usage**
 
@@ -63,7 +55,6 @@ This is a Flask application that demonstrates user authentication, authorization
    FLASK_APP=app FLASK_ENV=development flask run
    ```
 
-
    This starts the Flask development server, usually accessible at** **`http://127.0.0.1:5000/` in your web browser.
 
 **API Endpoints**
@@ -71,7 +62,7 @@ This is a Flask application that demonstrates user authentication, authorization
 * **Register:** `POST /register` (requires username, password)
 * **Login:** `POST /login` (requires username, password)
 * **Get All Users:** `GET /users` (requires JWT token, admin role)
-* **Get User by ID:** `GET /user/<int:user_id>` (requires JWT token)
+* **Get User by Username:** `GET /user/` (requires JWT token)
 * **Update User:** `POST update` (requires JWT token, user data)
 * **Logout:** `GET logout`
 
