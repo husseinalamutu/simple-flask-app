@@ -4,4 +4,9 @@
 
 {% block content %}
 <h2>User Not Found.</h2>
+{% if session.get('user_role') == 'user' %}
+    <a href="{{ url_for('auth.dashboard', token=session.token) }}">Go back to Dashboard</a>
+{% else %}
+    <a href="{{ url_for('auth.admin', token=session.token) }}">Go back to Admin Panel</a>
+{% endif %}
 {% endblock %}

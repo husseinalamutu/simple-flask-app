@@ -7,7 +7,7 @@
 {% if all_users %}
 <ul>
     {% for user in all_users %}
-    <li>{{ user.username }}</li>
+    <li>{{ user.username }} - {{ user.role }}</li>
     {% endfor %}
 </ul>
 {% else %}

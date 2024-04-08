@@ -10,6 +10,15 @@ class User:
         users_collection.insert_one(user)
 
     @staticmethod
+    def get_all():
+        """Retrieves all users from the collection.
+
+        Returns:
+            A cursor object containing all user documents.
+        """
+        return users_collection.find()
+
+    @staticmethod
     def find_by_username(username):
         return users_collection.find_one({"username": username})
 
@@ -18,5 +27,7 @@ class User:
     #     return users_collection.find_one({"_id": user_id})
 
     @staticmethod
-    def update(user_id, data):
-        users_collection.update_one({"_id": user_id}, {"$set": data})
+    def update(username, data):
+        users_collection.update_one({"username": username}, {"$set": data})
+
+

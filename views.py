@@ -41,9 +41,15 @@ def login():
         if not user or not check_password_hash(user["password"], password):
             return render_template('login.html', message='Invalid username or password')
 
-        access_token = create_access_token(identity=username)
-        session['token'] = access_token
-        return redirect(url_for('auth.dashboard', token=access_token))
+        if user["role"] == 'USER':
+            access_token = create_access_token(identity=username)
+            session['token'] = access_token
+            session['user_role'] = 'user'  # Add user role to session
+            return redirect(url_for('auth.dashboard', token=access_token))
+        else:
+            access_token = create_access_token(identity=username)
+            session['token'] = access_token
+            return redirect(url_for('auth.admin', token=access_token))
 
     return render_template('login.html')
 
@@ -88,7 +94,7 @@ def update_user_by_username():
             update_data["role"] = request.form['role']
 
         if update_data:
-            User.update(user['_id'], update_data)  # Use user['_id'] for update
+            User.update(user['username'], update_data)
             return redirect(url_for('auth.login'))
 
     return render_template('update_user.html')
@@ -123,8 +129,6 @@ def get_user_by_username():
 def dashboard():
     token = request.args.get('token') or session.pop('token', None)  # Get token from args or session
     if token:
-        # Extract user's role from JWT token claims
-        # current_user = get_jwt_identity()
         return render_template('dashboard.html', token=token)  # , is_super=is_super
     else:
         return redirect(url_for('auth.login'))
@@ -133,13 +137,7 @@ def dashboard():
 def admin():
     token = request.args.get('token')
     if token:
-        # Extract user's role from JWT token claims
-        # current_user = get_jwt_identity()
-        # Add authorization check (e.g., check if current_user['role'] == 'SUPER')
-        # if current_user['role'] == 'SUPER':
         return render_template('admin.html', token=token)  # , is_super=is_super
-        # else:
-        #   return render_template('unauthorized.html'), 403  # Forbidden for non-super users
     else:
         return redirect(url_for('auth.login'))
 
