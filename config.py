@@ -1,5 +1,10 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from the .env file
+
 class Config:
-    SECRET_KEY = 'super_secret_key'
-    MONGO_URI = 'mongodb://localhost:27017/injozi'
-    JWT_SECRET_KEY = 'a_jwt_secret_key'
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    MONGO_URI = os.getenv('MONGO_URI')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     

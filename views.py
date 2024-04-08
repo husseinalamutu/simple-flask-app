@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session
 from flask_jwt_extended import create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
-from bson import ObjectId
 
 from models import User
 
@@ -43,6 +42,7 @@ def login():
             return render_template('login.html', message='Invalid username or password')
 
         access_token = create_access_token(identity=username)
+        session['token'] = access_token
         return redirect(url_for('auth.dashboard', token=access_token))
 
     return render_template('login.html')
@@ -68,25 +68,19 @@ def reset_password():
     return render_template('reset_password.html')
 
 @auth_bp.route('/update', methods=['GET', 'POST'])
-def update_user_by_id():
+def update_user_by_username():
     if request.method == 'POST':
-        user_id_str = request.form['user_id']
+        username = request.form['username']
 
-        if not user_id_str:
-            return render_template('update_user.html', message='User ID is required')
+        if not username:
+            return render_template('update_user.html', message='Username is required')
 
-        try:
-            user_id = ObjectId(user_id_str)
-            user = User.find_by_id(user_id)
-        except:
-            return render_template('update_user.html', message='Invalid user ID format')
+        user = User.find_by_username(username)
 
         if not user:
             return render_template('update_user.html', message='User not found')
 
         update_data = {}
-        if request.form['username'] and request.form['username'] != '':
-            update_data["username"] = request.form['username']
         if request.form['new_password'] and request.form['new_password'] != '':
             hashed_password = generate_password_hash(request.form['new_password'])
             update_data["password"] = hashed_password
@@ -94,10 +88,11 @@ def update_user_by_id():
             update_data["role"] = request.form['role']
 
         if update_data:
-            User.update(user_id, update_data)
+            User.update(user['_id'], update_data)  # Use user['_id'] for update
             return redirect(url_for('auth.login'))
 
     return render_template('update_user.html')
+
 
 @auth_bp.route('/logout')
 def logout():
@@ -110,22 +105,23 @@ def get_all_users():
     all_users = User.get_all()
     return render_template('all_users.html', all_users=all_users)
 
-@auth_bp.route('/user', methods=['POST'])
-def get_user_by_id():
-    user_id = request.form.get('user_id')
+@auth_bp.route('/user/username', methods=['POST'])
+def get_user_by_username():
+    username = request.form.get('username')
 
-    if not user_id:
-        return jsonify({'message': 'User ID is required'}), 400
+    if not username:
+        return render_template('error.html', message='Username is required'), 400
 
-    user = User.find_by_id(ObjectId(user_id))
+    user = User.find_by_username(username)
+
     if not user:
-        return render_template('no_users.html')
+        return render_template('no_users.html')  # User not found
 
     return render_template('user.html', user=user)
 
 @auth_bp.route('/dashboard')
 def dashboard():
-    token = request.args.get('token')
+    token = request.args.get('token') or session.pop('token', None)  # Get token from args or session
     if token:
         # Extract user's role from JWT token claims
         # current_user = get_jwt_identity()

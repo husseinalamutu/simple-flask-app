@@ -23,12 +23,12 @@
 <ul>
     <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
     <li>
-        <form action="{{ url_for('auth.get_user_by_id') }}" method="POST">
-            <label for="user_id">User ID:</label>
-            <input type="text" id="user_id" name="user_id" required>
+        <form action="{{ url_for('auth.get_user_by_username') }}" method="POST">
+            <label for="user_id">Username:</label>
+            <input type="text" id="user_name" name="user_name" required>
             <button type="submit">View User</button>
         </form>             
     </li>
-    <li><a href="{{ url_for('auth.update_user_by_id') }}">Update User</a></li>
+    <li><a href="{{ url_for('auth.update_user_by_username') }}">Update User</a></li>
 </ul>
 {% endblock %}

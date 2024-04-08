@@ -1,10 +1,6 @@
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
-from config import Config
-
-client = MongoClient(Config.MONGO_URI)
-db = client["injozi"]
-users_collection = db["users"]
+from db import users_collection
 
 class User:
     @staticmethod
@@ -17,9 +13,9 @@ class User:
     def find_by_username(username):
         return users_collection.find_one({"username": username})
 
-    @staticmethod
-    def find_by_id(user_id):
-        return users_collection.find_one({"_id": user_id})
+    # @staticmethod
+    # def find_by_id(user_id):
+    #     return users_collection.find_one({"_id": user_id})
 
     @staticmethod
     def update(user_id, data):
