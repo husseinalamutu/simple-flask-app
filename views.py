@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
-from flask_jwt_extended import create_access_token
+from flask import Flask, Blueprint, render_template, request, redirect, url_for, session
+from flask_jwt_extended import create_access_token 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from models import User
@@ -41,14 +41,13 @@ def login():
         if not user or not check_password_hash(user["password"], password):
             return render_template('login.html', message='Invalid username or password')
 
+        access_token = create_access_token(identity=username)
+        session['token'] = access_token
+
         if user["role"] == 'USER':
-            access_token = create_access_token(identity=username)
-            session['token'] = access_token
             session['user_role'] = 'user'  # Add user role to session
             return redirect(url_for('auth.dashboard', token=access_token))
         else:
-            access_token = create_access_token(identity=username)
-            session['token'] = access_token
             return redirect(url_for('auth.admin', token=access_token))
 
     return render_template('login.html')
@@ -102,8 +101,14 @@ def update_user_by_username():
 
 @auth_bp.route('/logout')
 def logout():
-    # You can implement any logout logic here, such as clearing JWT tokens or session data
+    # Clear session data
+    session.clear()
+
+    # # If using JWT tokens, use a dedicated logout mechanism
+    # jwt.logout()  # Assuming you're using Flask-JWT-Extended
+
     return redirect(url_for('auth.login'))
+
 
 # Other routes and functions go here...
 @auth_bp.route('/users', methods=['GET'])
@@ -135,9 +140,8 @@ def dashboard():
 
 @auth_bp.route('/admin')
 def admin():
-    token = request.args.get('token')
+    token = request.args.get('token') or session.pop('token', None)  
     if token:
         return render_template('admin.html', token=token)  # , is_super=is_super
     else:
         return redirect(url_for('auth.login'))
-
