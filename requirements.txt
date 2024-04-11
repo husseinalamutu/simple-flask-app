@@ -1,0 +1,5 @@
+Flask
+jwt
+pymongo
+Werkzeug
+python-dotenv
