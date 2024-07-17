@@ -18,24 +18,22 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install bandit
+        pip install -r requirements.txt
 
     - name: Run security tests with Bandit
       run: bandit -r .
 
-    - name: Start application
+    - name: Start Flask application
       run: |
-        # Replace this with the commands to start your application
-        nohup python app.py &
+        nohup flask run --host=0.0.0.0 --port=5000 &
 
-    - name: Wait for application to be ready
+    - name: Wait for Flask application to be ready
       run: |
-        # Replace this with commands to check your application is ready
         sleep 10
 
     - name: Run OWASP ZAP Baseline Scan
       run: |
-        docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://localhost:8000 -r zap_report.html
+        docker run --network="host" -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://localhost:5000 -r zap_report.html
       env:
         DISPLAY: ':0'
 
