@@ -6,6 +6,13 @@ jobs:
   security_tests:
     runs-on: ubuntu-latest
 
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+        ports:
+          - 8080:8080
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -20,5 +27,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install bandit
 
-    - name: Run security tests
+    - name: Run security tests with Bandit
       run: bandit -r .
+
+    - name: Start application
+      run: |
+        docker-compose up -d
+        docker ps
+
+    - name: Run OWASP ZAP Baseline Scan
+      run: |
+        docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t http://localhost:8029 -r zap_report.html
+      env:
+        DISPLAY: ':0'
+
+    - name: Upload ZAP report
+      uses: actions/upload-artifact@v2
+      with:
+        name: zap-report
+        path: zap_report.html
